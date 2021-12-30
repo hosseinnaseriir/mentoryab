@@ -1,0 +1,34 @@
+{
+  "name": "mentoryab",
+  "version": "1.0.0",
+  "description": "great website for finding iranian mentors and private teachers",
+  "main": "app.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production app",
+    "dev": "cross-env NODE_ENV=development DEBUG=app nodemon app"
+  },
+  "keywords": [
+    "mentorship",
+    "private",
+    "teacher",
+    "mentoryab",
+    "mentor",
+    "finder"
+  ],
+  "author": "hossein naseri",
+  "license": "ISC",
+  "dependencies": {
+    "-": "^0.0.1",
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.4",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "debug": "^4.3.3",
+    "dotenv": "^10.0.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15"
+  }
+}
