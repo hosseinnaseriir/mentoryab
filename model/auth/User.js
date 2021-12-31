@@ -5,7 +5,6 @@ const {
 } = require("./validation/userValidation");
 
 const userSchema = new mongoose.Schema({
-    // _id: String,
     fullName: {
         type: String,
         required: true,
@@ -25,6 +24,7 @@ const userSchema = new mongoose.Schema({
         minlength: 4,
         maxlength: 255
     },
+
     confirmPassword: {
         type: String,
         required: true,
@@ -33,9 +33,11 @@ const userSchema = new mongoose.Schema({
     },
     iWantBeMentor: {
         type: Boolean,
+        default:false
     },
     iWantBeTeacher: {
         type: Boolean,
+        default:false
     },
     createAt: {
         type: Date,
