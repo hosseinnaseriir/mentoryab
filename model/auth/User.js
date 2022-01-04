@@ -57,10 +57,9 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.registerValidation = function (body) {
     return userYupSchema.validate(body, {
-        abortEarly: true
+        abortEarly: false
     })
 }
-
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

@@ -5,7 +5,8 @@ const {
 
 const userSchema = new mongoose.Schema({
     userID: {
-        type: String,
+        // type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
     expertise: {

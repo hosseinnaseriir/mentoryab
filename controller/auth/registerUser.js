@@ -1,7 +1,7 @@
 const User = require("../../model/auth/User");
 const bcrypt = require("bcryptjs");
 
-exports.userController = async (req, res) => {
+exports.registerUserController = async (req, res) => {
     
     const {
         fullName,
@@ -23,7 +23,7 @@ exports.userController = async (req, res) => {
         res.setHeader("Content-Type", "application/json");
 
         if (user) return res.status(404).json({
-            errors: 'کاربری با این ایمیل قبلا ثبت شده است !'
+            errors: ['کاربری با این ایمیل قبلا ثبت شده است !']
         });
 
         await User.create({
