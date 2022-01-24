@@ -9,7 +9,7 @@ exports.registerUserController = async (req, res) => {
         password,
         confirmPassword,
         iWantBeMentor,
-        iWantBeTeacher
+        
     } = req.body;
 
     try {
@@ -31,12 +31,13 @@ exports.registerUserController = async (req, res) => {
             email,
             password: await bcrypt.hash(password, 10),
             confirmPassword: await bcrypt.hash(password, 10),
-            iWantBeMentor,
-            iWantBeTeacher
+            iWantBeMentor,            
         });
 
+        let simpleUserWellcomeMessage = `${fullName} عزیز ، شما با موفقیت ثبت نام شدید !`;
+        let mentorUserWellcomeMessage = `${fullName} عزیز ، شما با موفقیت ثبت نام شدید ، لطفاََ فرایند ثبت نام خود را تکمیل کنید`;
         return res.status(201).json({
-            message: `${fullName} عزیز ، شما با موفقیت ثبت نام شدید !`
+            message: iWantBeMentor ? mentorUserWellcomeMessage :simpleUserWellcomeMessage
         })
 
     } catch (err) {

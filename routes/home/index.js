@@ -14,11 +14,6 @@ const menu =  [{
                 id: 'mentoryab-child',
                 name: 'منتوریاب',
                 path: '/mentoryab',
-            },
-            {
-                id: 'privateTeacher-child',
-                name: 'معلم خصوصی',
-                path: '/private-teacher',
             }
         ]
     },
@@ -26,12 +21,6 @@ const menu =  [{
         id: 'mentoryab',
         name: 'منتوریاب',
         path: '/mentoryab',
-    },
-    {
-        id: 'privateTeacher',
-        name: 'معلم خصوصی',
-        path: '/private-teacher',
-
     },
     {
         id: 'articles',
