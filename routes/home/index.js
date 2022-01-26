@@ -60,7 +60,8 @@ exports.userHeader = route.get('/get-user-header', authenticate, async (req, res
         res.status(200).json({
             logo:null,
             menu,
-            fullName: user.fullName
+            fullName: user.fullName,
+            iWantBeMentor:user.iWantBeMentor
         })
     }
 });

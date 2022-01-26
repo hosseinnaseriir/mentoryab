@@ -24,7 +24,7 @@ exports.loginUserController = async (req, res) => {
 
         let requestPassword = await bcrypt.hash(password, 10);
         if (!requestPassword === user.password) return res.status(404).json({
-            errors: ['ایمیل یا کلمه عبور شما اشتبه است !']
+            errors: ['ایمیل یا کلمه عبور شما اشتباه است !']
         });
         
         let verifyToken = jwt.sign({
