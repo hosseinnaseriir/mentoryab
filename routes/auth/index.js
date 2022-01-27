@@ -4,11 +4,13 @@ const {
 const { completedUserController } = require("../../controller/auth/completedUser");
 const { registerUserController } = require("../../controller/auth/registerUser");
 const { loginUserController } = require("../../controller/auth/loginUser");
-
+const handleUploadImage = require('./../../controller/media/uploadController');
 const route = Router();
+const multer = require('multer');
 
 route.post('/login', loginUserController);
 route.post('/register', registerUserController);
-route.post('/complete-register', completedUserController);
+route.post('/complete-register', handleUploadImage('image') , completedUserController);
+
 
 module.exports = route;

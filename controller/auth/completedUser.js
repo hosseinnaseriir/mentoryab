@@ -3,69 +3,75 @@ const CompletedUser = require("../../model/auth/CompletedUser");
 const User = require("../../model/auth/User");
 
 exports.completedUserController = async (req, res) => {
-    const {
-        userID,
-        expertise,
-        job,
-        company,
-        workExperience,
-        resume,
-        province,
-        city,
-        address,
-        birthday,
-        socialMedia,
-        bithday,
-        phoneNumber
-    } = req.body;
 
-    try {
-
-        await CompletedUser.completeUserValidation(req.body);
+    console.log( 'complete formdata' , req.body);
+    console.log( 'complete formdata' , req.file);
 
 
-        let user = await User.findById(userID);
+    // const {
+    //     userID,
+    //     expertise,
+    //     job,
+    //     company,
+    //     workExperience,
+    //     resume,
+    //     province,
+    //     city,
+    //     address,
+    //     birthday,
+    //     socialMedia,
+    //     bithday,
+    //     phoneNumber
+    // } = req.body;
 
-        if (!user) return res.status(404).json({
-            errors: 'کاربر پیدا نشد !'
-        });
+    // try {
 
-        let isCreated = await CompletedUser.find({
-            userID: user._id
-        })
+    //     await CompletedUser.completeUserValidation(req.body);
 
-        console.log(isCreated)
-        console.log(isCreated.length)
 
-        res.setHeader("Content-Type", "application/json");
-        if (isCreated.length) return res.status(404).json({
-            errors: 'پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !'
-        });
+    //     let user = await User.findById(userID);
 
-        await CompletedUser.create({
-            userID,
-            expertise,
-            job,
-            company,
-            workExperience,
-            resume,
-            province,
-            city,
-            address,
-            birthday,
-            socialMedia,
-            bithday,
-            phoneNumber,
-        });
+    //     if (!user) return res.status(404).json({
+    //         errors: 'کاربر پیدا نشد !'
+    //     });
 
-        return res.status(201).json({
-            message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شدد !`
-        })
+    //     let isCreated = await CompletedUser.find({
+    //         userID: user._id
+    //     })
 
-    } catch (err) {
-        res.status(400).json({
-            errors: err.errors || err
-        });
-    }
+    //     console.log(isCreated)
+    //     console.log(isCreated.length)
+
+    //     res.setHeader("Content-Type", "application/json");
+    //     if (isCreated.length) return res.status(404).json({
+    //         errors: 'پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !'
+    //     });
+
+    //     await CompletedUser.create({
+    //         userID,
+    //         expertise,
+    //         job,
+    //         company,
+    //         workExperience,
+    //         resume,
+    //         province,
+    //         city,
+    //         address,
+    //         birthday,
+    //         socialMedia,
+    //         bithday,
+    //         phoneNumber,
+    //     });
+
+    //     return res.status(201).json({
+    //         message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شد !`
+    //     })
+
+    // } catch (err) {
+    //     res.status(400).json({
+    //         errors: err.errors || err
+    //     });
+    // }
 
 }
+

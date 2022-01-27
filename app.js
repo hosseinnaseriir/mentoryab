@@ -1,6 +1,8 @@
+const path = require('path');
 var debug = require('debug')('app')
 var cors = require('cors');
 const express = require('express');
+const { getPath } = require('./utils/getPath');
 const app = express();
 
 app.use(cors());
@@ -8,6 +10,7 @@ app.use(cors());
 require('./config/env')(app);
 require('./config/db')();
 require('./middlewares/encodeing')(app);
+app.use(express.static( ('public')))
 
 
 
