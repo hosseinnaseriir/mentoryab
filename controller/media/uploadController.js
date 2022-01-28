@@ -3,10 +3,9 @@ const uuid = require('uuid').v4;
 
 
 function handleUploadImage(
-    imageName = "image",
-    folder='',
+    imagesName = ["image"],
+    folder = '',
     fileSize = 4000000) {
-
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
@@ -18,7 +17,7 @@ function handleUploadImage(
     })
 
     const fileFilter = (req, file, cb) => {
-
+      
         if (
             (file.mimetype === 'image/jpeg') ||
             (file.mimetype === 'application/pdf') ||
@@ -29,6 +28,13 @@ function handleUploadImage(
             cb("لطفا عکس با پسوند jpg آپلود کنید", false);
         }
     }
+
+    let fileFields = imagesName.map(item => {
+        return {
+            name: item
+        }
+    })
+
     return multer({
         limits: {
             fileSize
@@ -36,7 +42,7 @@ function handleUploadImage(
         dest: "uploads/",
         storage,
         fileFilter
-    }).single(imageName);
+    }).fields(fileFields)
 
     // upload((req, res, err) => {
     //     if (err) {
@@ -46,6 +52,7 @@ function handleUploadImage(
     //         res.status(200).send("فایل آپلود شد")
     //     }
     // })
+
 
 }
 

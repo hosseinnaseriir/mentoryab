@@ -10,7 +10,7 @@ const multer = require('multer');
 
 route.post('/login', loginUserController);
 route.post('/register', registerUserController);
-route.post('/complete-register', handleUploadImage('image') , completedUserController);
+route.post('/complete-register', handleUploadImage(['avatar' , 'resume']) , completedUserController);
 
 
 module.exports = route;

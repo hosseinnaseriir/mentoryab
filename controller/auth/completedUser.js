@@ -4,8 +4,9 @@ const User = require("../../model/auth/User");
 
 exports.completedUserController = async (req, res) => {
 
-    console.log( 'complete formdata' , req.body);
-    console.log( 'complete formdata' , req.file);
+    // console.log( 'complete formdata000000000000' , req.body);
+    console.log( 'complete formdata111111111111' , req.file);
+    console.log( 'complete formdata222222222222' , req.file.buffer);
 
 
     // const {
