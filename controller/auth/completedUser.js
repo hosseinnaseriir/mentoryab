@@ -1,78 +1,94 @@
 const bcrypt = require("bcryptjs");
 const CompletedUser = require("../../model/auth/CompletedUser");
 const User = require("../../model/auth/User");
+const mongoose = require("mongoose");
+const fs = require('fs');
+const {getPath} = require('../../utils/getPath');
 
 exports.completedUserController = async (req, res) => {
 
-    // console.log( 'complete formdata000000000000' , req.body);
-    console.log( 'complete formdata111111111111' , req.file);
-    console.log( 'complete formdata222222222222' , req.file.buffer);
+    // console.log('complete formdata111111111111', req.files.avatar[0]);
+
+    fs.readFile(req.files.avatar[0].path, function (err, data) {
+        console.log(data)
+        console.log(err);
+        fs.writeFile(getPath(`public/uploads/${req.files.avatar[0].filename}.png`), data,(res) => {
+            console.log(res)
+        });
+    });
 
 
-    // const {
-    //     userID,
-    //     expertise,
-    //     job,
-    //     company,
-    //     workExperience,
-    //     resume,
-    //     province,
-    //     city,
-    //     address,
-    //     birthday,
-    //     socialMedia,
-    //     bithday,
-    //     phoneNumber
-    // } = req.body;
+    const {
+        userID,
+        expertise,
+        specialty,
+        company,
+        workExperience,
+        resume,
+        province,
+        city,
+        address,
+        birthDay,
+        socialMedia,
+        bithday,
+        phoneNumber
+    } = req.body;
 
-    // try {
+    let ID = mongoose.Types.ObjectId(userID)
+    // console.log({
+    //     ...req.body,
+    //     userID: ID
+    // });
 
-    //     await CompletedUser.completeUserValidation(req.body);
+    try {
 
+        await CompletedUser.completeUserValidation({
+            ...req.body,
+            userID: ID
+        });
 
-    //     let user = await User.findById(userID);
+        let user = await User.findById(userID);
 
-    //     if (!user) return res.status(404).json({
-    //         errors: 'کاربر پیدا نشد !'
-    //     });
+        if (!user) return res.status(404).json({
+            errors: 'کاربر پیدا نشد !'
+        });
 
-    //     let isCreated = await CompletedUser.find({
-    //         userID: user._id
-    //     })
+        let isCreated = await CompletedUser.find({
+            userID: user._id
+        })
 
-    //     console.log(isCreated)
-    //     console.log(isCreated.length)
+        res.setHeader("Content-Type", "application/json");
+        if (isCreated.length) return res.status(404).json({
+            errors: 'پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !'
+        });
 
-    //     res.setHeader("Content-Type", "application/json");
-    //     if (isCreated.length) return res.status(404).json({
-    //         errors: 'پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !'
-    //     });
+        await CompletedUser.create({
+            userID: ID,
+            expertise,
+            specialty,
+            company,
+            workExperience,
+            resume,
+            province,
+            city,
+            address,
+            birthDay,
+            socialMedia,
+            bithday,
+            phoneNumber,
+            avatar: null,
+            resume: null
+        });
 
-    //     await CompletedUser.create({
-    //         userID,
-    //         expertise,
-    //         job,
-    //         company,
-    //         workExperience,
-    //         resume,
-    //         province,
-    //         city,
-    //         address,
-    //         birthday,
-    //         socialMedia,
-    //         bithday,
-    //         phoneNumber,
-    //     });
+        return res.status(201).json({
+            message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شد !`
+        })
 
-    //     return res.status(201).json({
-    //         message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شد !`
-    //     })
-
-    // } catch (err) {
-    //     res.status(400).json({
-    //         errors: err.errors || err
-    //     });
-    // }
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({
+            errors: err.errors || err
+        });
+    }
 
 }
-

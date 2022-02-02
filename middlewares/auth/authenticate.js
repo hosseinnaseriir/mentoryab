@@ -5,7 +5,7 @@ module.exports = function (req, res, next) {
     const token = req.header('ath-token');
 
     if (!token) res.status(401).json({
-        error: ['acces Denied !']
+        error: ['invalid token!']
     });
     try {
         let verified = jwt.verify(token, process.env.TOKEN_SECRET);

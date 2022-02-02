@@ -61,6 +61,7 @@ exports.userHeader = route.get('/get-user-header', authenticate, async (req, res
             logo:null,
             menu,
             fullName: user.fullName,
+            userID: user._id,
             iWantBeMentor:user.iWantBeMentor
         })
     }

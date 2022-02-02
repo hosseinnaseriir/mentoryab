@@ -5,17 +5,16 @@ const {
 
 const userSchema = new mongoose.Schema({
     userID: {
-        // type: String,
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
-    expertise: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 255,
-    },
-    job: {
+    // expertise: {
+    //     type: String,
+    //     required: true,
+    //     minlength: 1,
+    //     maxlength: 255,
+    // },
+    specialty: {
         type: String,
         required: true,
     },
@@ -28,7 +27,7 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     resume: {
-        type: Boolean,
+        type: String,
     },
     province: {
         type: String,
@@ -45,13 +44,16 @@ const userSchema = new mongoose.Schema({
     socialMedia: {
         any: [{}]
     },
-    birthday: {
+    birthDay: {
         type: String,
         required: true,
     },
     phoneNumber: {
         type: Number,
         required: true
+    },
+    avatar: {
+        type: String
     },
     createAt: {
         type: Date,
@@ -74,7 +76,7 @@ module.exports = CompletedUser;
 // {
 //     "userID": "61ca322feadc3b2b5535d3ab",
 //     "expertise": "expertise",
-//     "job": "job",
+//     "specialty": "specialty",
 //     "company": "company",
 //     "workExperience": "workExperience",
 //     "resume": "true",
