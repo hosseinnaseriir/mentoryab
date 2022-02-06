@@ -2,11 +2,12 @@ const yup  = require('yup');
 
 exports.completeUserYupSchema = yup.object().shape({
     userID: yup.mixed().required('آیدی کاربر الزامی است !').nullable(true),
-    // expertise: yup.string().required('تچربه کاری الزامی است !'),
     specialty: yup.string().required(' مقدار کار الزامی است'),
     company: yup.string().required('محل کار الزامی است'),
     workExperience: yup.number('تجربه کاری به عدد باشد !').required('تچربه کاری الزامی است !'),
-    resume: yup.string(),
+    personPosition: yup.string().required(' !موقعیت شغلی الزامی است '),
+    resume: yup.string().nullable(true),
+    avatar: yup.string().nullable(true),
     province: yup.string().required(' مقدار استان الزامی است'),
     city: yup.string().required(' مقدار شهر الزامی است'),
     address: yup.string().required(' مقدار آدرس الزامی است'),

@@ -54,6 +54,15 @@ function handleUploadImage(
         fileFilter
     }).fields(fileFields)
 
+    //  upload(function (err) {
+    //     if (err) {
+    //         console.log("There was an error uploading the image.");
+    //     }
+    //     res.json({
+    //         success: true,
+    //         message: 'Image uploaded!'
+    //     });
+    // })
     upload(req, res, function (err) {
         if (err) {
             console.log("There was an error uploading the image.");
@@ -63,7 +72,6 @@ function handleUploadImage(
             message: 'Image uploaded!'
         });
     })
-
     // return upload( req , res , (err) => {
     //     if (err) {
     //         console.log(err);

@@ -1,94 +1,94 @@
-const bcrypt = require("bcryptjs");
 const CompletedUser = require("../../model/auth/CompletedUser");
 const User = require("../../model/auth/User");
-const mongoose = require("mongoose");
-const fs = require('fs');
-const {getPath} = require('../../utils/getPath');
+const { getPath } = require("../../utils/getPath");
 
-exports.completedUserController = async (req, res) => {
+exports.completedUserController = async (req, res, next) => {
+  try {
 
-    // console.log('complete formdata111111111111', req.files.avatar[0]);
-
-    fs.readFile(req.files.avatar[0].path, function (err, data) {
-        console.log(data)
-        console.log(err);
-        fs.writeFile(getPath(`public/uploads/${req.files.avatar[0].filename}.png`), data,(res) => {
-            console.log(res)
-        });
-    });
-
+    let avatar = req.files?.avatar;
+    let resume = req.file?.resume;
 
     const {
-        userID,
-        expertise,
-        specialty,
-        company,
-        workExperience,
-        resume,
-        province,
-        city,
-        address,
-        birthDay,
-        socialMedia,
-        bithday,
-        phoneNumber
+      userID,
+      expertise,
+      specialty,
+      company,
+      workExperience,
+      province,
+      city,
+      address,
+      birthDay,
+      socialMedia,
+      phoneNumber,
+      personPosition,
     } = req.body;
 
-    let ID = mongoose.Types.ObjectId(userID)
-    // console.log({
-    //     ...req.body,
-    //     userID: ID
-    // });
+    console.log(
+      {
+        ...req.body,
+        avatar,
+        resume,
+      },
+      "(req.body here"
+    );
+    let x = await CompletedUser.completeUserValidation({
+      ...req.body,
+      avatar: avatar ? avatar.md5 + ".jpg" : '',
+      resume: resume ? resume.md5 + ".jpg" : '',
+    });
+    console.log(
+      x,
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    );
 
-    try {
+    let user = await User.findById(userID);
 
-        await CompletedUser.completeUserValidation({
-            ...req.body,
-            userID: ID
-        });
+    if (!user)
+      return res.status(404).json({
+        errors: "کاربر پیدا نشد !",
+      });
 
-        let user = await User.findById(userID);
+    let isCreated = await CompletedUser.find({
+      userID: user._id,
+    });
 
-        if (!user) return res.status(404).json({
-            errors: 'کاربر پیدا نشد !'
-        });
+    res.setHeader("Content-Type", "application/json");
+    if (isCreated.length)
+      return res.status(404).json({
+        errors: ["پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !"],
+      });
 
-        let isCreated = await CompletedUser.find({
-            userID: user._id
-        })
+    avatar?.mv(getPath(`public/uploads/${avatar.md5}.jpg`), (err) => {
+      console.log(err);
+    });
+    resume?.mv(getPath(`public/uploads/${resume.md5}.jpg`), (err) => {
+      console.log(err);
+    });
 
-        res.setHeader("Content-Type", "application/json");
-        if (isCreated.length) return res.status(404).json({
-            errors: 'پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !'
-        });
+    await CompletedUser.create({
+      userID,
+      expertise,
+      specialty,
+      company,
+      workExperience,
+      personPosition,
+      province,
+      city,
+      address,
+      birthDay,
+      socialMedia,
+      phoneNumber,
+      avatar: avatar ? avatar.md5 + ".jpg" : null,
+      resume: resume ? resume.md5 + ".jpg" : null,
+    });
 
-        await CompletedUser.create({
-            userID: ID,
-            expertise,
-            specialty,
-            company,
-            workExperience,
-            resume,
-            province,
-            city,
-            address,
-            birthDay,
-            socialMedia,
-            bithday,
-            phoneNumber,
-            avatar: null,
-            resume: null
-        });
-
-        return res.status(201).json({
-            message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شد !`
-        })
-
-    } catch (err) {
-        console.log(err)
-        res.status(400).json({
-            errors: err.errors || err
-        });
-    }
-
-}
+    return res.status(201).json({
+      message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شد !`,
+    });
+  } catch (err) {
+    console.log("err", err);
+    res.status(400).json({
+      errors: err.errors || err,
+    });
+  }
+};
