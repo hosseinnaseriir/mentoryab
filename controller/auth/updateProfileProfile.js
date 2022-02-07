@@ -2,13 +2,13 @@ const CompletedUser = require("../../model/auth/CompletedUser");
 const User = require("../../model/auth/User");
 const { getPath } = require("../../utils/getPath");
 
-exports.completedUserController = async (req, res, next) => {
+exports.updateProfileProfile = async (req, res) => {
   try {
-    if (!req.files?.avatar)
+    if (!req.files?.avatar && !req.body.avatar)
       return res.status(404).json({
         errors: ["عکس پروفایل را فراموش کردید !"],
       });
-    if (!req.files?.resume)
+    if (!req.files?.resume && !req.body.resume)
       return res.status(404).json({
         errors: ["عکس رزومه را فراموش کردید !"],
       });
@@ -31,10 +31,10 @@ exports.completedUserController = async (req, res, next) => {
       personPosition,
     } = req.body;
 
-    let x = await CompletedUser.completeUserValidation({
+    await CompletedUser.completeUserValidation({
       ...req.body,
-      avatar: avatar ? avatar.md5 + ".jpg" : "",
-      resume: resume ? resume.md5 + ".jpg" : "",
+      avatar: avatar ? avatar.md5 + ".jpg" : req.body.avatar || "",
+      resume: resume ? resume.md5 + ".jpg" : req.body.resume || "",
     });
 
     let user = await User.findById(userID);
@@ -44,15 +44,16 @@ exports.completedUserController = async (req, res, next) => {
         errors: "کاربر پیدا نشد !",
       });
 
-    let isCreated = await CompletedUser.find({
+    let completedUser = await CompletedUser.find({
       userID: user._id,
     });
 
-    res.setHeader("Content-Type", "application/json");
-    if (isCreated.length)
+    if (!completedUser)
       return res.status(404).json({
-        errors: ["پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !"],
+        errors: "پروفایل پیدا نشد !",
       });
+
+    res.setHeader("Content-Type", "application/json");
 
     avatar?.mv(getPath(`public/uploads/${avatar.md5}.jpg`), (err) => {
       console.log(err);
@@ -61,25 +62,30 @@ exports.completedUserController = async (req, res, next) => {
       console.log(err);
     });
 
-    await CompletedUser.create({
-      userID,
-      expertise,
-      specialty,
-      company,
-      workExperience,
-      personPosition,
-      province,
-      city,
-      address,
-      birthDay,
-      socialMedia,
-      phoneNumber,
-      avatar: avatar ? avatar.md5 + ".jpg" : null,
-      resume: resume ? resume.md5 + ".jpg" : null,
-    });
+    await CompletedUser.findOneAndUpdate(
+      {
+        userID: user._id,
+      },
+      {
+        userID,
+        expertise,
+        specialty,
+        company,
+        workExperience,
+        personPosition,
+        province,
+        city,
+        address,
+        birthDay,
+        socialMedia,
+        phoneNumber,
+        avatar: avatar ? avatar.md5 + ".jpg" : req.body.avatar || "",
+        resume: resume ? resume.md5 + ".jpg" : req.body.resume || "",
+      }
+    );
 
-    return res.status(201).json({
-      message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت ثبت شد !`,
+    return res.status(200).json({
+      message: `${user.fullName} عزیز ،  پروفایل شما با موفقیت آپدیت شد !`,
     });
   } catch (err) {
     console.log("err", err);
