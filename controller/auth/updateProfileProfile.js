@@ -16,10 +16,39 @@ exports.updateProfileProfile = async (req, res) => {
     let avatar = req.files?.avatar;
     let resume = req.files?.resume;
 
+    const checkImage = (data) =>
+      data?.mimetype === "image/jpeg" ||
+      data?.mimetype === "image/png" ||
+      data?.mimetype === "image/jpg";
+    if (avatar) {
+      if (checkImage(avatar)) {
+        avatar?.mv(getPath(`public/uploads/${avatar?.name}.jpg`), (err) => {
+          console.log(err);
+        });
+      } else {
+        return res.status(404).json({
+          errors: ["عکس با فرمت png یا jpg  آپلود شود !"],
+        });
+      }
+    }
+
+    if (resume) {
+      if (checkImage(resume)) {
+        resume?.mv(getPath(`public/uploads/${resume.name}`), (err) => {
+          console.log(err);
+        });
+      } else {
+        return res.status(404).json({
+          errors: ["رزومه با فرمت png یا jpg  آپلود شود !"],
+        });
+      }
+    }
+
     const {
       userID,
       expertise,
       specialty,
+      tool,
       company,
       workExperience,
       province,
@@ -33,7 +62,7 @@ exports.updateProfileProfile = async (req, res) => {
 
     await CompletedUser.completeUserValidation({
       ...req.body,
-      avatar: avatar ? avatar.md5 + ".jpg" : req.body.avatar || "",
+      avatar: avatar ? avatar?.md5 + ".jpg" : req.body.avatar || "",
       resume: resume ? resume.md5 + ".jpg" : req.body.resume || "",
     });
 
@@ -55,12 +84,12 @@ exports.updateProfileProfile = async (req, res) => {
 
     res.setHeader("Content-Type", "application/json");
 
-    avatar?.mv(getPath(`public/uploads/${avatar.md5}.jpg`), (err) => {
-      console.log(err);
-    });
-    resume?.mv(getPath(`public/uploads/${resume.md5}.jpg`), (err) => {
-      console.log(err);
-    });
+    // avatar.mv(getPath(`public/uploads/${avatar.md5}.jpg`), (err) => {
+    //   console.log(err);
+    // });
+    // resume?.mv(getPath(`public/uploads/${resume.md5}.jpg`), (err) => {
+    //   console.log(err);
+    // });
 
     await CompletedUser.findOneAndUpdate(
       {
@@ -70,6 +99,7 @@ exports.updateProfileProfile = async (req, res) => {
         userID,
         expertise,
         specialty,
+        tool,
         company,
         workExperience,
         personPosition,
@@ -80,7 +110,7 @@ exports.updateProfileProfile = async (req, res) => {
         socialMedia,
         phoneNumber,
         avatar: avatar ? avatar.md5 + ".jpg" : req.body.avatar || "",
-        resume: resume ? resume.md5 + ".jpg" : req.body.resume || "",
+        resume: resume ? resume.name : req.body.resume || "",
       }
     );
 

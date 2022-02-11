@@ -3,6 +3,7 @@ const yup  = require('yup');
 exports.completeUserYupSchema = yup.object().shape({
     userID: yup.mixed().required('آیدی کاربر الزامی است !').nullable(true),
     specialty: yup.string().required(' مقدار کار الزامی است'),
+    tool: yup.string().required(' مقدار جزییات تخصص الزامی است'),
     company: yup.string().required('محل کار الزامی است'),
     workExperience: yup.number('تجربه کاری به عدد باشد !').required('تچربه کاری الزامی است !'),
     personPosition: yup.string().required(' !موقعیت شغلی الزامی است '),

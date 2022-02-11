@@ -20,6 +20,7 @@ exports.completedUserController = async (req, res, next) => {
       userID,
       expertise,
       specialty,
+      tool,
       company,
       workExperience,
       province,
@@ -31,11 +32,41 @@ exports.completedUserController = async (req, res, next) => {
       personPosition,
     } = req.body;
 
-    let x = await CompletedUser.completeUserValidation({
+    await CompletedUser.completeUserValidation({
       ...req.body,
       avatar: avatar ? avatar.md5 + ".jpg" : "",
       resume: resume ? resume.md5 + ".jpg" : "",
     });
+
+    const checkImage = (data) =>
+      data?.mimetype === "image/jpeg" ||
+      data?.mimetype === "image/png" ||
+      data?.mimetype === "image/jpg";
+
+    if (checkImage(avatar)) {
+      avatar?.mv(
+        getPath(
+          `public/uploads/${avatar?.name}.jpg`
+        ),
+        (err) => {
+          console.log(err);
+        }
+      );
+    } else {
+      return res.status(404).json({
+        errors: ["عکس با فرمت png یا jpg  آپلود شود !"],
+      });
+    }
+
+    if (checkImage(resume)) {
+      resume?.mv(getPath(`public/uploads/${resume.name}`), (err) => {
+        console.log(err);
+      });
+    } else {
+      return res.status(404).json({
+        errors: ["رزومه با فرمت png یا jpg  آپلود شود !"],
+      });
+    }
 
     let user = await User.findById(userID);
 
@@ -54,17 +85,11 @@ exports.completedUserController = async (req, res, next) => {
         errors: ["پروفایل شما تکمیل شده ، لطفا نسبت به ویرایش آن اقدام کنید !"],
       });
 
-    avatar?.mv(getPath(`public/uploads/${avatar.md5}.jpg`), (err) => {
-      console.log(err);
-    });
-    resume?.mv(getPath(`public/uploads/${resume.md5}.jpg`), (err) => {
-      console.log(err);
-    });
-
     await CompletedUser.create({
       userID,
       expertise,
       specialty,
+      tool,
       company,
       workExperience,
       personPosition,
@@ -75,7 +100,7 @@ exports.completedUserController = async (req, res, next) => {
       socialMedia,
       phoneNumber,
       avatar: avatar ? avatar.md5 + ".jpg" : null,
-      resume: resume ? resume.md5 + ".jpg" : null,
+      resume: resume ? resume.name : null,
     });
 
     return res.status(201).json({

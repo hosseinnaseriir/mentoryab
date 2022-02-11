@@ -13,7 +13,14 @@ require("./config/env")(app);
 require("./config/db")();
 require("./middlewares/encodeing")(app);
 app.use(express.static(getPath("public")));
-app.use(fileUpload());
+app.use(
+  fileUpload({
+    limits: {
+      fileSize: 1024 * 1024, // 1 MB
+    },
+    
+  })
+);
 
 const port = process.env.PORT;
 app.get("/", (req, res) =>
