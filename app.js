@@ -16,7 +16,7 @@ app.use(express.static(getPath("public")));
 app.use(
   fileUpload({
     limits: {
-      fileSize: 1024 * 1024, // 1 MB
+      fileSize: 3024 * 3024, // 1 MB
     },
     
   })

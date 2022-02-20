@@ -1,3 +1,5 @@
+const fs = require("fs");
+const sharp = require("sharp");
 const CompletedUser = require("../../model/auth/CompletedUser");
 const User = require("../../model/auth/User");
 const { getPath } = require("../../utils/getPath");
@@ -5,28 +7,37 @@ const { getPath } = require("../../utils/getPath");
 exports.updateProfileProfile = async (req, res) => {
   try {
     if (!req.files?.avatar && !req.body.avatar)
-      return res.status(404).json({
+      return res.status(400).json({
         errors: ["عکس پروفایل را فراموش کردید !"],
       });
     if (!req.files?.resume && !req.body.resume)
-      return res.status(404).json({
+      return res.status(400).json({
         errors: ["عکس رزومه را فراموش کردید !"],
       });
 
     let avatar = req.files?.avatar;
     let resume = req.files?.resume;
 
-    const checkImage = (data) =>
-      data?.mimetype === "image/jpeg" ||
-      data?.mimetype === "image/png" ||
-      data?.mimetype === "image/jpg";
+    console.log(avatar);
+
+    const checkImage = (image) =>
+      image?.mimetype === "image/jpeg" ||
+      image?.mimetype === "image/png" ||
+      image?.mimetype === "image/jpg";
     if (avatar) {
       if (checkImage(avatar)) {
-        avatar?.mv(getPath(`public/uploads/${avatar?.name}.jpg`), (err) => {
-          console.log(err);
-        });
+        await sharp(avatar.data)
+          .jpeg({ quality: 60 })
+          .toFile(getPath(`public/uploads/${avatar.md5 + avatar.name}.jpg`))
+          .catch((err) => console.log(err));
+        // avatar?.mv(
+        //   getPath(`public/uploads/${avatar.md5 + avatar.name}.jpg`),
+        //   (err) => {
+        //     console.log(err);
+        //   }
+        // );
       } else {
-        return res.status(404).json({
+        return res.status(400).json({
           errors: ["عکس با فرمت png یا jpg  آپلود شود !"],
         });
       }
@@ -34,11 +45,18 @@ exports.updateProfileProfile = async (req, res) => {
 
     if (resume) {
       if (checkImage(resume)) {
-        resume?.mv(getPath(`public/uploads/${resume.name}`), (err) => {
-          console.log(err);
-        });
+        await sharp(resume.data)
+          .jpeg({ quality: 60 })
+          .toFile(getPath(`public/uploads/${resume.md5 + resume.name}`))
+          .catch((err) => console.log(err));
+        // resume?.mv(
+        //   getPath(`public/uploads/${resume.md5 + resume.name}`),
+        //   (err) => {
+        //     console.log(err);
+        //   }
+        // );
       } else {
-        return res.status(404).json({
+        return res.status(400).json({
           errors: ["رزومه با فرمت png یا jpg  آپلود شود !"],
         });
       }
@@ -62,8 +80,12 @@ exports.updateProfileProfile = async (req, res) => {
 
     await CompletedUser.completeUserValidation({
       ...req.body,
-      avatar: avatar ? avatar?.md5 + ".jpg" : req.body.avatar || "",
-      resume: resume ? resume.md5 + ".jpg" : req.body.resume || "",
+      avatar: avatar
+        ? avatar.md5 + avatar.name + ".jpg"
+        : req.body.avatar || "",
+      resume: resume
+        ? resume.md5 + resume.name + ".jpg"
+        : req.body.resume || "",
     });
 
     let user = await User.findById(userID);
@@ -77,6 +99,8 @@ exports.updateProfileProfile = async (req, res) => {
       userID: user._id,
     });
 
+    console.log(completedUser);
+
     if (!completedUser)
       return res.status(404).json({
         errors: "پروفایل پیدا نشد !",
@@ -84,12 +108,27 @@ exports.updateProfileProfile = async (req, res) => {
 
     res.setHeader("Content-Type", "application/json");
 
-    // avatar.mv(getPath(`public/uploads/${avatar.md5}.jpg`), (err) => {
-    //   console.log(err);
-    // });
-    // resume?.mv(getPath(`public/uploads/${resume.md5}.jpg`), (err) => {
-    //   console.log(err);
-    // });
+    if (avatar) {
+      fs.unlink(
+        getPath(`/public/uploads/${completedUser[0].avatar}`),
+        async (err) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+
+    if (resume) {
+      fs.unlink(
+        getPath(`/public/uploads/${completedUser[0].resume}`),
+        async (err) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
 
     await CompletedUser.findOneAndUpdate(
       {
@@ -109,8 +148,10 @@ exports.updateProfileProfile = async (req, res) => {
         birthDay,
         socialMedia,
         phoneNumber,
-        avatar: avatar ? avatar.md5 + ".jpg" : req.body.avatar || "",
-        resume: resume ? resume.name : req.body.resume || "",
+        avatar: avatar
+          ? avatar.md5 + avatar.name + ".jpg"
+          : req.body.avatar || "",
+        resume: resume ? resume.md5 + resume.name : req.body.resume || "",
       }
     );
 
