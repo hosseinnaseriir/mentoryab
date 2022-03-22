@@ -15,7 +15,7 @@ exports.handleForgotPassword = async (req, res) => {
   const token = JWT.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
   });
-
+4
   console.log(token);
   nodeMailer(
     email,
